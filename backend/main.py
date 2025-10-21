@@ -24,10 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ... (replace the lines above with this)
 
-# Define a persistent data directory, configurable via environment variable
-# Defaults to "." (current directory) if not set
 DATA_DIR = os.getenv("DATA_DIR", ".")
 # Ensure the data directory exists
 os.makedirs(DATA_DIR, exist_ok=True) 
