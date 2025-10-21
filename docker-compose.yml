@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    # Build the Docker image from the Dockerfile in the current directory
+    build: .
+    ports:
+      # Map your local port 8000 to the container's port 8000
+      - "8000:8000"
+    volumes:
+      # Create a persistent volume named "resume_data" and mount it
+      # inside the container at /app/data
+      - resume_data:/app/data
+    environment:
+      # Tell main.py (our modified version) to use this directory
+      - DATA_DIR=/app/data
+      # Tell models.py to save the SQLite database in the same directory
+      - DATABASE_URL=sqlite:////app/data/candidates.db
+
+volumes:
+  # Declare the named volume for Docker to manage
+  resume_data:

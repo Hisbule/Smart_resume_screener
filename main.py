@@ -24,11 +24,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-init_db()
+# ... (replace the lines above with this)
+
+# Define a persistent data directory, configurable via environment variable
+# Defaults to "." (current directory) if not set
+DATA_DIR = os.getenv("DATA_DIR", ".")
+# Ensure the data directory exists
+os.makedirs(DATA_DIR, exist_ok=True) 
+
+init_db() # init_db is defined in models.py
 embed_svc = get_embed_service()
 DIM = embed_svc.dim
-INDEX_PATH = os.path.join(os.getcwd(), "faiss_index")
+# Use the new DATA_DIR for the index path
+INDEX_PATH = os.path.join(DATA_DIR, "faiss_index") 
 idx = init_global(DIM, INDEX_PATH)
+
+# ... (rest of the file is unchanged)
 
 def get_db():
     db = SessionLocal()
