@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart-resume-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount a volume for persistent data (database, index files)
+      - backend_data:/app
+    environment:
+      # Ensure the DB path inside the container matches the volume mount
+      - DATABASE_URL=sqlite:////app/candidates.db
+      # You can add OPENAI_API_KEY here if needed
+      # - OPENAI_API_KEY=your_key_here
+    networks:
+      - resume-net
+
+  frontend:
+    build:
+      context: ./frontened
+      dockerfile: Dockerfile
+      args:
+        # Pass the backend service name as the API URL during build
+        # Docker Compose automatically resolves 'backend' to the backend container's IP
+        - VITE_API_URL=http://backend:8000
+    container_name: smart-resume-frontend
+    ports:
+      - "8080:80" # Map host port 8080 to container port 80 (nginx default)
+    depends_on:
+      - backend
+    networks:
+      - resume-net
+
+volumes:
+  backend_data: # Define the named volume for persistence
+
+networks:
+  resume-net:
+    driver: bridge
