@@ -2,9 +2,10 @@
 
 An AI-powered application designed to streamline the recruitment process by automatically parsing, analyzing, and ranking candidate resumes against job descriptions.
 
-*![][image1]*
+![rESUME](IMAGES/r2.PNG)
 
-*![][image2]*
+![OUTPUT](IMAGES/r4.PNG)
+
 
 ## **Overview**
 
