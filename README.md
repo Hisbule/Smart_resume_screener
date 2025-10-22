@@ -99,12 +99,6 @@ Smart\_resume\_screener/
 
    * To remove the persistent data (database, index files), use: docker-compose down \-v
 
-### **Running Locally (Without Docker)**
-
-Refer to the individual README files within the backend/ and frontened/ directories for instructions on setting up and running each part natively.
-
-* [Backend README](http://docs.google.com/backend/README.md)  
-* [Frontend README](http://docs.google.com/frontened/README.md)
 
 ## **📖 Usage**
 
