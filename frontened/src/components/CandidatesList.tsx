@@ -1,8 +1,7 @@
 import { Users, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { api } from "@/lib/api";
 
 interface Candidate {
   id: string;
@@ -13,7 +12,7 @@ const CandidatesList = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["candidates"],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/debug/list_candidates?limit=50`);
+      const response = await fetch(api.listCandidates(50));
       if (!response.ok) throw new Error("Failed to fetch candidates");
       return response.json() as Promise<Candidate[]>;
     },

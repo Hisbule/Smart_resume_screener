@@ -8,8 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import CandidateCard from "./CandidateCard";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { api } from "@/lib/api";
 
 interface RankedCandidate {
   candidate_id: string;
@@ -33,7 +32,7 @@ const RankingSection = () => {
 
   const rankMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`${API_URL}/rank`, {
+      const response = await fetch(api.rank(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

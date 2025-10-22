@@ -4,8 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { api } from "@/lib/api";
 
 interface UploadResult {
   candidate_id: string;
@@ -25,7 +24,7 @@ const UploadSection = () => {
         formData.append("files", file);
       });
 
-      const response = await fetch(`${API_URL}/upload`, {
+      const response = await fetch(api.upload(), {
         method: "POST",
         body: formData,
       });

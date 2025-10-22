@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Upload, Search, Users, FileText } from "lucide-react";
+import { Upload, Search, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UploadSection from "@/components/UploadSection";
 import RankingSection from "@/components/RankingSection";
-import CandidatesList from "@/components/CandidatesList";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("upload");
@@ -30,7 +29,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 bg-card shadow-card">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-card shadow-card">
             <TabsTrigger value="upload" className="gap-2">
               <Upload className="h-4 w-4" />
               Upload
@@ -38,10 +37,6 @@ const Index = () => {
             <TabsTrigger value="rank" className="gap-2">
               <Search className="h-4 w-4" />
               Rank
-            </TabsTrigger>
-            <TabsTrigger value="candidates" className="gap-2">
-              <Users className="h-4 w-4" />
-              Candidates
             </TabsTrigger>
           </TabsList>
 
@@ -51,10 +46,6 @@ const Index = () => {
 
           <TabsContent value="rank" className="animate-fade-in">
             <RankingSection />
-          </TabsContent>
-
-          <TabsContent value="candidates" className="animate-fade-in">
-            <CandidatesList />
           </TabsContent>
         </Tabs>
       </main>
