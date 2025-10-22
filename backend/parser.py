@@ -70,10 +70,10 @@ def extract_contacts(text: str) -> Dict[str, str]:
     if email_match:
         contacts["email"] = email_match.group()
 
-    # Phone
-    phone_match = re.search(r"(\+?\d{1,4}[\s\-]?\(?\d{2,3}\)?[\s\-]?\d{3,4}[\s\-]?\d{3,4})", text)
+    phone_match = re.search(r"([\+\[\(\s]?\d[\d\s\-\.\]\(\)]{8,18}\d)", text)
     if phone_match:
-        contacts["phone"] = phone_match.group()
+        contacts["phone"] = phone_match.group(1).strip()
+    # --- END PHONE NUMBER FIX ---
 
     # LinkedIn or portfolio links
     link_match = re.findall(r"(https?://[^\s]+)", text)

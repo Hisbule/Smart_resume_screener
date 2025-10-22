@@ -15,6 +15,9 @@ export const api = {
   
   // Debug endpoints
   debugIndex: () => `${API_URL}/debug/index`,
+  
+  // Reset endpoints
+  reset: () => `${API_URL}/reset`,
 };
 
 // Helper function for fetch with error handling

@@ -1,3 +1,4 @@
+# In smart_resume_backend/indexer.py
 import faiss
 import numpy as np
 import os
@@ -25,6 +26,7 @@ class FaissIndex:
                     print("Failed to load existing FAISS index:", e)
 
     def add(self, vectors: np.ndarray, ids: List[str]):
+        # ... (existing code)
         vectors = np.asarray(vectors, dtype=np.float32)
         if vectors.ndim == 1:
             vectors = vectors.reshape(1, -1)
@@ -36,6 +38,7 @@ class FaissIndex:
         self.save()
 
     def search(self, q: np.ndarray, top_k: int = 10):
+        # ... (existing code)
         q = np.asarray(q, dtype=np.float32)
         if q.ndim == 1:
             q = q.reshape(1, -1)
@@ -54,6 +57,7 @@ class FaissIndex:
         return results
 
     def save(self):
+        # ... (existing code)
         if not self.path:
             return
         parent = os.path.dirname(self.path)
@@ -63,12 +67,37 @@ class FaissIndex:
         with open(self.path + ".ids", "wb") as f:
             pickle.dump(self.id_map, f)
 
+    # --- ADD THIS NEW METHOD ---
+    def reset(self):
+      
+        print("Resetting FAISS index...")
+        self.index.reset()
+        self.id_map.clear()
+        
+        if self.path:
+            idx_path = self.path + ".idx"
+            ids_path = self.path + ".ids"
+            try:
+                if os.path.exists(idx_path):
+                    os.remove(idx_path)
+                    print(f"Removed {idx_path}")
+                if os.path.exists(ids_path):
+                    os.remove(ids_path)
+                    print(f"Removed {ids_path}")
+            except Exception as e:
+                print(f"Error removing index files: {e}")
+        
+        # Re-initialize the base index after reset
+        self.index = faiss.IndexFlatIP(self.dim)
+        print(f"Index reset complete. ntotal = {self.ntotal}")
+    
     @property
     def ntotal(self):
         return int(self.index.ntotal)
 
 _GLOBAL = None
 def init_global(dim: int, path: str = None):
+    # ... (existing code)
     global _GLOBAL
     if _GLOBAL is None:
         _GLOBAL = FaissIndex(dim, path)

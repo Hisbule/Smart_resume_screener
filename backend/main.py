@@ -24,19 +24,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-DATA_DIR = os.getenv("DATA_DIR", ".")
-# Ensure the data directory exists
-os.makedirs(DATA_DIR, exist_ok=True) 
-
-init_db() # init_db is defined in models.py
+init_db()
 embed_svc = get_embed_service()
 DIM = embed_svc.dim
-# Use the new DATA_DIR for the index path
-INDEX_PATH = os.path.join(DATA_DIR, "faiss_index") 
+INDEX_PATH = os.path.join(os.getcwd(), "faiss_index")
 idx = init_global(DIM, INDEX_PATH)
-
-# ... (rest of the file is unchanged)
 
 def get_db():
     db = SessionLocal()
@@ -52,6 +44,31 @@ def _to_vector(enc):
     if arr.ndim == 1:
         return arr.astype("float32")
     return arr.reshape(-1)[0:idx.dim].astype("float32")
+@app.post("/reset")
+async def reset_data(db: Session = Depends(get_db)): #
+    """
+    Deletes all candidate data from the database and resets the FAISS index.
+    """
+    logger.info("Received request to reset all data.")
+    
+    try:
+        # 1. Delete all candidates from the database
+        num_deleted = db.query(Candidate).delete() #
+        db.commit() #
+        logger.info(f"Deleted {num_deleted} candidates from database.")
+        
+        # 2. Reset the FAISS index
+        idx.reset() #
+        logger.info("FAISS index has been reset.")
+        
+        return {
+            "status": "success",
+            "message": f"Successfully deleted {num_deleted} candidates and reset the index."
+        }
+    except Exception as e:
+        db.rollback() #
+        logger.exception("Failed to reset data: %s", e)
+        raise HTTPException(status_code=500, detail=f"Failed to reset data: {e}") #
 
 @app.post("/upload")
 async def upload(files: List[UploadFile] = File(...), db: Session = Depends(get_db)):

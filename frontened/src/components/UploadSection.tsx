@@ -1,10 +1,21 @@
 import { useState, useCallback } from "react";
-import { Upload, File, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Upload, File, CheckCircle2, XCircle, Loader2, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface UploadResult {
   candidate_id: string;
@@ -76,8 +87,74 @@ const UploadSection = () => {
     }
   };
 
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(api.reset(), {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Reset failed");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Database Reset",
+        description: data.message || "All candidate data has been deleted successfully",
+      });
+      setUploadResults([]);
+    },
+    onError: () => {
+      toast({
+        title: "Reset Failed",
+        description: "Failed to reset database. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Reset Database Button */}
+      <div className="flex justify-end">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm">
+              <Trash2 className="h-4 w-4 mr-2" />
+              Reset Database
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete all candidate data
+                from the database and reset the search index.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => resetMutation.mutate()}
+                disabled={resetMutation.isPending}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {resetMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Resetting...
+                  </>
+                ) : (
+                  "Reset Database"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
       <Card className="shadow-card hover:shadow-hover transition-shadow duration-300">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
